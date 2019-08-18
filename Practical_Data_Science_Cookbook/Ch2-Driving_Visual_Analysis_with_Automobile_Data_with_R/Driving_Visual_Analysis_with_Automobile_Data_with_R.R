@@ -1,4 +1,20 @@
-setwd("U:\\Python\\Books\\Practical_Data_Science_Cookbook\\Ch2-Driving_Visual_Analysis_with_Automobile_Data_with_R")
+## Work directory
+#setwd("U:\\Python\\Books\\Practical_Data_Science_Cookbook\\
+#      Ch2-Driving_Visual_Analysis_with_Automobile_Data_with_R")
+
+# Home directory
+setwd(paste("/Users/Jake/Documents/Programming/Python/Books/",
+            "Practical_Data_Science_Cookbook/",
+            "Ch2-Driving_Visual_Analysis_with_Automobile_Data_with_R",
+            sep = ""))
+
+#install.packages("plyr")
+#install.packages("ggplot2")
+#install.packages("reshape2")
+library(plyr)
+library(ggplot2)
+library(reshape2)
+
 vehicles <- read.csv("vehicles.csv", stringsAsFactors = F)
 labels <- do.call(rbind, strsplit(readLines("varlabels.txt"), " - "))
 
@@ -18,3 +34,16 @@ vehicles$trany[vehicles$trany == ''] <- NA
 vehicles$trany2 <- ifelse(substr(vehicles$trany, 1, 4) == 'Auto', 'Auto', 'Manual')
 vehicles$trany <- as.factor(vehicles$trany)
 table(vehicles$trany2)
+with(vehicles, table(sCharger, year))
+
+print(paste('Class of sCharger:', class(vehicles$sCharger)))
+print(paste('Unique values:', unique(vehicles$sCharger)))
+
+print(paste('Class of tCharger:', class(vehicles$tCharger)))
+print(paste('Unique values:', unique(vehicles$tCharger)))
+
+mpgByYr <- ddply(vehicles, ~year, summarise, avgMPG = mean(comb08),
+                 avgHghy = mean(highway08), avgCity = mean(city08))
+
+ggplot(mpgByYr, aes(year, avgMPG)) + geom_point() + geom_smooth() + 
+  xlab('Year') + ylab('Average MPG') + ggtitle('All Cars')
